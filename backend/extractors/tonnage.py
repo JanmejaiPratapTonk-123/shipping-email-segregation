@@ -3,42 +3,62 @@ import re
 
 def extract_tonnage(text):
 
-    vessel_name = None
-    vessel_size = None
-    open_port = None
-    open_date = None
+    data = {
+        "vessel_name": None,
+        "account_name": None,
+        "open_port": None,
+        "open_date": None,
+        "vessel_type": "Bulk Carrier",
+        "vessel_size": None
+    }
 
-    vessel_match = re.search(
-        r'MV\s+([A-Z\s]+?)\s+DWT',
-        text,
-        re.IGNORECASE
-    )
+    text = text.upper()
 
-    if vessel_match:
-        vessel_name = vessel_match.group(1).strip()
+    vessel = re.search(r"MV\s+([A-Z\s]+)", text)
 
-    size_match = re.search(
-        r'DWT\s+(\d+)',
-        text,
-        re.IGNORECASE
-    )
+    if vessel:
+        name = vessel.group(1)
+        name = re.split(r"DWT|\(|OPEN|-|/", name)[0]
+        data["vessel_name"] = name.strip()
 
-    if size_match:
-        vessel_size = size_match.group(1)
+    size = re.search(r"/(\d+[K]?)\/", text)
+
+    if not size:
+        size = re.search(r"DWT\s*(\d+[K]?)", text)
+
+    if not size:
+        size = re.search(r"(\d+[K]?)\s*DWT", text)
+
+    if size:
+        data["vessel_size"] = size.group(1)
 
     open_match = re.search(
-        r'OPEN\s+([A-Z\s,]+)\s+O/A\s+([A-Z0-9\s\-]+)',
-        text,
-        re.IGNORECASE
+        r"OPEN\s+([0-9]{1,2}\s+[A-Z]+)\s+([A-Z\s,]+)",
+        text
     )
 
     if open_match:
-        open_port = open_match.group(1).strip()
-        open_date = open_match.group(2).strip()
+        data["open_date"] = open_match.group(1).strip()
+        data["open_port"] = open_match.group(2).strip()
 
-    return {
-        "vessel_name": vessel_name,
-        "vessel_size": vessel_size,
-        "open_port": open_port,
-        "open_date": open_date
-    }
+    oa_match = re.search(
+        r"OPEN\s+([A-Z\s,]+)\s+O/A\s+([A-Z0-9\s]+)",
+        text
+    )
+
+    if oa_match:
+        data["open_port"] = oa_match.group(1).strip()
+        data["open_date"] = oa_match.group(2).strip()
+
+    if not data["open_port"]:
+
+        alt = re.search(
+            r"-\s*([A-Z\s]+)\s*,\s*([0-9A-Z\s]+(?:JUNE|JULY|MAY))",
+            text
+        )
+
+        if alt:
+            data["open_port"] = alt.group(1).strip()
+            data["open_date"] = alt.group(2).strip()
+
+    return data
