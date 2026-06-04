@@ -17,7 +17,7 @@ def extract_tc(text):
 
     # Delivery Port
     delivery = re.search(
-        r"DELIVERY PORT[:\s]+([A-Z\s]+)",
+        r"DELIVERY PORT[:\s]+([A-Z\s]+?)(?:\n|$)",
         text
     )
 
@@ -26,7 +26,7 @@ def extract_tc(text):
 
     # Redelivery Port
     redelivery = re.search(
-        r"REDELIVERY PORT[:\s]+([A-Z\s]+)",
+        r"REDELIVERY PORT[:\s]+([A-Z\s]+?)(?:\n|$)",
         text
     )
 
@@ -35,7 +35,7 @@ def extract_tc(text):
 
     # Duration
     duration = re.search(
-        r"DURATION[:\s]+([0-9\sA-Z]+)",
+        r"DURATION[:\s]+([0-9A-Z\s]+?)(?:\n|$)",
         text
     )
 
@@ -44,7 +44,7 @@ def extract_tc(text):
 
     # Laycan
     laycan = re.search(
-        r"LAYCAN[:\s]+([0-9A-Z\s]+)",
+        r"LAYCAN[:\s]+([0-9A-Z\s]+?)(?:\n|$)",
         text
     )
 
@@ -53,7 +53,7 @@ def extract_tc(text):
 
     # Cargo
     cargo = re.search(
-        r"CARGO[:\s]+([A-Z\s]+)",
+        r"CARGO[:\s]+([A-Z\s]+?)(?:\n|$)",
         text
     )
 
