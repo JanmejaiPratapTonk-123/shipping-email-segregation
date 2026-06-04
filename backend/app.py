@@ -1,4 +1,6 @@
 from fastapi import FastAPI
+from pydantic import BaseModel
+
 from classifier import classify_email
 
 from extractors.tonnage import extract_tonnage
@@ -8,35 +10,29 @@ from extractors.cargo_tc import extract_tc
 app = FastAPI()
 
 
-@app.get("/")
-def home():
-    return {
-        "message": "Shipping Email Segregation API Running"
-    }
+class EmailRequest(BaseModel):
+    text: str
 
 
-@app.post("/predict")
-def predict(data: dict):
+@app.post("/analyze")
+def analyze_email(request: EmailRequest):
 
-    email_text = data["email"]
+    text = request.text
 
-    result = classify_email(email_text)
+    categories = classify_email(text)
 
-    category = result["category"]
+    extracted = {}
 
-    extracted_data = {}
+    if "TONNAGE" in categories:
+        extracted["TONNAGE"] = extract_tonnage(text)
 
-    if category == "TONNAGE":
-        extracted_data = extract_tonnage(email_text)
+    if "CARGO_VC" in categories:
+        extracted["CARGO_VC"] = extract_vc(text)
 
-    elif category == "CARGO_VC":
-        extracted_data = extract_vc(email_text)
-
-    elif category == "CARGO_TC":
-        extracted_data = extract_tc(email_text)
+    if "CARGO_TC" in categories:
+        extracted["CARGO_TC"] = extract_tc(text)
 
     return {
-        "category": category,
-        "confidence": result["confidence"],
-        "extracted_data": extracted_data
+        "categories": categories,
+        "extracted_data": extracted
     }

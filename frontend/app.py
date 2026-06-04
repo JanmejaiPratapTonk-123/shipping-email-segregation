@@ -14,12 +14,13 @@ if st.button("Analyze Email"):
 
     if email.strip() == "":
         st.warning("Please enter email text")
+
     else:
 
         response = requests.post(
-            "http://127.0.0.1:8000/predict",
+            "http://127.0.0.1:8000/analyze",
             json={
-                "email": email
+                "text": email
             }
         )
 
@@ -27,11 +28,11 @@ if st.button("Analyze Email"):
 
         st.success("Analysis Completed")
 
-        st.subheader("Category")
-        st.write(result["category"])
+        st.subheader("Categories")
 
-        st.subheader("Confidence")
-        st.write(result["confidence"])
+        for cat in result["categories"]:
+            st.write(cat)
 
         st.subheader("Extracted Data")
+
         st.json(result["extracted_data"])
