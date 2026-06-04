@@ -1,9 +1,9 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
 
-from extractors.tonnage import extract_tonnage
-from extractors.cargo_vc import extract_cargo_vc
-from extractors.cargo_tc import extract_cargo_tc
+from backend.extractors.tonnage import extract_tonnage
+from backend.extractors.cargo_vc import extract_cargo_vc
+from backend.extractors.cargo_tc import extract_cargo_tc
 
 app = FastAPI()
 
