@@ -18,7 +18,7 @@ if st.button("Analyze Email"):
     else:
 
         response = requests.post(
-            "http://127.0.0.1:8000/analyze",
+            "https://shipping-email-segregation.onrender.com/analyze",
             json={
                 "text": email
             }
