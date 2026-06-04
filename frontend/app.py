@@ -35,4 +35,13 @@ if st.button("Analyze Email"):
 
         st.subheader("Extracted Data")
 
+        cleaned = {}
+
+        for category, values in result["extracted_data"].items():
+            cleaned[category] = {
+                k: v for k, v in values.items()
+                if v not in [None, "", "NULL"]
+            }
+
+        st.json(cleaned)
         st.json(result["extracted_data"])
