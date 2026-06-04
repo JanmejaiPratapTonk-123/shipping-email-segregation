@@ -1,9 +1,9 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
 
-from backend.extractors.tonnage import extract_tonnage
-from backend.extractors.cargo_vc import extract_cargo_vc
-from backend.extractors.cargo_tc import extract_cargo_tc
+from extractors.tonnage import extract_tonnage
+from extractors.cargo_vc import extract_vc
+from extractors.cargo_tc import extract_tc
 
 app = FastAPI()
 
@@ -56,10 +56,10 @@ def analyze_email(request: EmailRequest):
         extracted_data["TONNAGE"] = extract_tonnage(email_text)
 
     if "CARGO_VC" in categories:
-        extracted_data["CARGO_VC"] = extract_cargo_vc(email_text)
+        extracted_data["CARGO_VC"] = extract_vc(email_text)
 
     if "CARGO_TC" in categories:
-        extracted_data["CARGO_TC"] = extract_cargo_tc(email_text)
+        extracted_data["CARGO_TC"] = extract_tc(email_text)
 
     return {
         "categories": categories,
