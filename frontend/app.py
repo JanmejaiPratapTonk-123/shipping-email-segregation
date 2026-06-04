@@ -44,4 +44,3 @@ if st.button("Analyze Email"):
             }
 
         st.json(cleaned)
-        st.json(result["extracted_data"])
