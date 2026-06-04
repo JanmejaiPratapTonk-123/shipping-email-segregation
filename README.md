@@ -1,69 +1,51 @@
 # Shipping Email Segregation & Data Extraction System
 
-## Overview
+## Live Demo
+
+Live Application:
+https://shipping-email-segregation.streamlit.app/
+
+GitHub Repository:
+https://github.com/JanmejaiPratapTonk-123/shipping-email-segregation
+
+---
+
+# Overview
 
 The Shipping Email Segregation & Data Extraction System is an AI/ML-based application developed to automate the processing of shipping and chartering emails.
 
-The system reads incoming shipping emails, classifies them into relevant business categories, and extracts structured commercial information for further operational use.
+The system reads shipping emails, classifies them into business categories, and extracts important commercial information in a structured format.
 
-This solution is developed without using any external Large Language Model (LLM) APIs such as OpenAI ChatGPT or Claude. The project uses Machine Learning, NLP techniques, and regex-based extraction methods.
+This project is developed without using any third-party Large Language Model (LLM) APIs such as OpenAI ChatGPT or Claude.
 
----
+The solution uses:
 
-# Problem Statement
-
-Shipping companies and chartering teams receive hundreds of broker and cargo emails daily. Manual segregation and extraction of information from these emails is time-consuming and error-prone.
-
-This project automates:
-
-* Email categorization
-* Information extraction
-* Structured data generation
-* Multi-category email handling
+* Machine Learning
+* Natural Language Processing
+* Regex-based Information Extraction
+* Rule-based Multi-category Detection
 
 ---
 
-# Features
+# Objective
 
-## Email Classification
+The goal of this project is to:
 
-The system classifies emails into:
-
-* TONNAGE
-* CARGO_VC
-* CARGO_TC
-
-The system also supports hybrid emails containing multiple categories.
-
-Example:
-
-```text
-MV BLUE STAR 38K DWT OPEN SINGAPORE
-
-Cargo: 30000 MTS COAL
-Load Port: INDIA
-Discharge Port: CHINA
-Laycan: 15 JULY
-```
-
-Output:
-
-```json
-{
-  "categories": [
-    "TONNAGE",
-    "CARGO_VC"
-  ]
-}
-```
+* Automatically classify shipping emails
+* Extract structured business information
+* Reduce manual data entry
+* Improve operational efficiency
+* Support vessel and cargo matching workflows
 
 ---
 
-# Information Extraction
+# Supported Email Categories
 
-## Tonnage Emails
+## 1. TONNAGE
 
-Extracted Fields:
+Emails containing vessel availability information.
+
+### Extracted Fields
 
 * Vessel Name
 * Account Name
@@ -74,9 +56,11 @@ Extracted Fields:
 
 ---
 
-## Cargo VC Emails
+## 2. CARGO_VC (Voyage Charter Cargo)
 
-Extracted Fields:
+Emails containing voyage cargo requirements.
+
+### Extracted Fields
 
 * Account Name
 * Cargo Name
@@ -87,9 +71,11 @@ Extracted Fields:
 
 ---
 
-## Cargo TC Emails
+## 3. CARGO_TC (Time Charter Cargo)
 
-Extracted Fields:
+Emails containing time charter cargo requirements.
+
+### Extracted Fields
 
 * Account Name
 * Cargo Name
@@ -101,76 +87,100 @@ Extracted Fields:
 
 ---
 
-# Technologies Used
+# Features
 
-* Python
-* FastAPI
-* Streamlit
-* Scikit-learn
-* TF-IDF Vectorization
-* Logistic Regression
-* Regex-based NLP
-* JSON Data Handling
+## Email Classification
+
+The system automatically classifies incoming shipping emails into:
+
+* TONNAGE
+* CARGO_VC
+* CARGO_TC
 
 ---
 
-# System Architecture
+## Multi-Category Detection
 
-```text
-Shipping Email
-       ↓
-Email Classification
-       ↓
-Category Detection
-       ↓
-Information Extraction
-       ↓
-Structured JSON Output
-```
+The application supports emails containing multiple categories simultaneously.
+
+Example:
+
+* Vessel availability + cargo requirement in same email
+
+---
+
+## Information Extraction
+
+The system extracts:
+
+* vessel details
+* cargo details
+* ports
+* dates
+* charter information
+
+and returns structured JSON output.
+
+---
+
+## Live Web Application
+
+The project includes:
+
+* FastAPI backend
+* Streamlit frontend
+* Public cloud deployment
+
+---
+
+# Technologies Used
+
+## Backend
+
+* Python
+* FastAPI
+* Scikit-learn
+* Regex
+* Joblib
+
+## Frontend
+
+* Streamlit
+
+## Machine Learning
+
+* TF-IDF Vectorization
+* Logistic Regression
 
 ---
 
 # Machine Learning Approach
 
-The project uses:
-
 ## TF-IDF Vectorization
 
-Used to convert email text into numerical feature vectors.
+Email text is converted into numerical feature vectors using TF-IDF.
 
 ## Logistic Regression
 
-Used for email category classification.
-
-The model is trained on a custom shipping email dataset.
+A Logistic Regression classifier is trained on shipping email datasets for category prediction.
 
 ---
 
-# Multi-Category Detection
+# Project Architecture
 
-An additional keyword-based detection layer is implemented to identify emails containing more than one shipping category.
-
-This helps process real-world broker emails that may contain:
-
-* vessel availability
-* cargo requirements
-* charter requests
-
-inside the same message.
-
----
-
-# Information Extraction Logic
-
-Regex-based extraction methods are used for:
-
-* vessel information
-* cargo details
-* loading/discharge ports
-* laycan dates
-* charter duration
-
-The extraction logic is modular and separated into dedicated extractor files.
+```text
+Shipping Email
+       ↓
+Text Preprocessing
+       ↓
+ML Classification
+       ↓
+Category Detection
+       ↓
+Regex-based Extraction
+       ↓
+Structured JSON Output
+```
 
 ---
 
@@ -204,9 +214,17 @@ shipping-email-segregation/
 
 ---
 
-# How to Run
+# How to Run Locally
 
-## Install Dependencies
+## 1. Clone Repository
+
+```bash
+git clone https://github.com/JanmejaiPratapTonk-123/shipping-email-segregation.git
+```
+
+---
+
+## 2. Install Dependencies
 
 ```bash
 pip install -r requirements.txt
@@ -214,7 +232,7 @@ pip install -r requirements.txt
 
 ---
 
-## Run Backend
+## 3. Run Backend
 
 ```bash
 cd backend
@@ -223,11 +241,32 @@ uvicorn app:app --reload
 
 ---
 
-## Run Frontend
+## 4. Run Frontend
 
 ```bash
 cd frontend
 streamlit run app.py
+```
+
+---
+
+# Sample Input
+
+```text
+From: broker@shipping.com
+Subject: Open Vessel and Cargo Opportunity
+
+MV BLUE STAR 38K DWT OPEN SINGAPORE ON 15 JULY.
+
+AVAILABLE FOR COAL CARGO.
+
+Cargo: 30000 MTS COAL
+Load Port: INDIA
+Discharge Port: CHINA
+Laycan: 15 JULY
+
+Regards,
+Shipping Broker
 ```
 
 ---
@@ -243,12 +282,14 @@ streamlit run app.py
   "extracted_data": {
     "TONNAGE": {
       "vessel_name": "BLUE STAR",
+      "vessel_type": "Bulk Carrier",
       "vessel_size": "38K"
     },
     "CARGO_VC": {
       "cargo_name": "30000 MTS COAL",
       "loading_port": "INDIA",
-      "discharge_port": "CHINA"
+      "discharge_port": "CHINA",
+      "cargo_type": "Voyage Charter"
     }
   }
 }
@@ -259,33 +300,34 @@ streamlit run app.py
 # Expected Outcome
 
 * Automatic segregation of shipping emails
-* Elimination of manual data entry
-* Faster cargo and vessel processing
-* Structured shipping data generation
-* Better operational efficiency
+* Reduced manual effort
+* Structured vessel and cargo database creation
+* Faster business processing
+* Improved operational visibility
 
 ---
 
 # Future Scope
 
+* Multiple vessel extraction
+* Multiple cargo extraction
 * Vessel-to-cargo matching
 * Duplicate email detection
 * Broker/customer analytics
 * Database integration
 * Market opportunity alerts
-* Voyage workflow integration
 
 ---
 
 # Conclusion
 
-This project demonstrates the use of Machine Learning and NLP techniques to automate shipping email processing.
+This project demonstrates the use of Machine Learning and NLP techniques for automating shipping email processing.
 
 The system successfully:
 
 * classifies shipping emails
 * extracts structured information
-* supports multi-category edge cases
-* generates usable JSON output
+* handles multi-category edge cases
+* generates business-ready JSON output
 
 without relying on external AI APIs.
