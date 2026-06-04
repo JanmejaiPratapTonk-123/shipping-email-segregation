@@ -17,30 +17,41 @@ if st.button("Analyze Email"):
 
     else:
 
-        response = requests.post(
-            "https://shipping-email-segregation.onrender.com/analyze",
-            json={
-                "text": email
-            }
-        )
+        try:
 
-        result = response.json()
+            response = requests.post(
+                "https://shipping-email-segregation.onrender.com/analyze",
+                json={
+                    "email_text": email
+                }
+            )
 
-        st.success("Analysis Completed")
+            result = response.json()
 
-        st.subheader("Categories")
+            st.success("Analysis Completed")
 
-        for cat in result["categories"]:
-            st.write(cat)
+            if "categories" in result:
 
-        st.subheader("Extracted Data")
+                st.subheader("Categories")
 
-        cleaned = {}
+                for cat in result["categories"]:
+                    st.write(cat)
 
-        for category, values in result["extracted_data"].items():
-            cleaned[category] = {
-                k: v for k, v in values.items()
-                if v not in [None, "", "NULL"]
-            }
+                st.subheader("Extracted Data")
 
-        st.json(cleaned)
+                cleaned = {}
+
+                for category, values in result["extracted_data"].items():
+
+                    cleaned[category] = {
+                        k: v for k, v in values.items()
+                        if v not in [None, "", "NULL"]
+                    }
+
+                st.json(cleaned)
+
+            else:
+                st.error(result)
+
+        except Exception as e:
+            st.error(f"Error: {e}")
