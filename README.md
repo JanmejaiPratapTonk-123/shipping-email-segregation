@@ -2,9 +2,24 @@
 
 ## Overview
 
-This project automatically classifies shipping emails into different business categories and extracts structured commercial information for further processing.
+The Shipping Email Segregation & Data Extraction System is an AI/ML-based application developed to automate the processing of shipping and chartering emails.
 
-The system is developed without using external Large Language Model APIs such as OpenAI or Claude.
+The system reads incoming shipping emails, classifies them into relevant business categories, and extracts structured commercial information for further operational use.
+
+This solution is developed without using any external Large Language Model (LLM) APIs such as OpenAI ChatGPT or Claude. The project uses Machine Learning, NLP techniques, and regex-based extraction methods.
+
+---
+
+# Problem Statement
+
+Shipping companies and chartering teams receive hundreds of broker and cargo emails daily. Manual segregation and extraction of information from these emails is time-consuming and error-prone.
+
+This project automates:
+
+* Email categorization
+* Information extraction
+* Structured data generation
+* Multi-category email handling
 
 ---
 
@@ -18,13 +33,37 @@ The system classifies emails into:
 * CARGO_VC
 * CARGO_TC
 
+The system also supports hybrid emails containing multiple categories.
+
+Example:
+
+```text
+MV BLUE STAR 38K DWT OPEN SINGAPORE
+
+Cargo: 30000 MTS COAL
+Load Port: INDIA
+Discharge Port: CHINA
+Laycan: 15 JULY
+```
+
+Output:
+
+```json
+{
+  "categories": [
+    "TONNAGE",
+    "CARGO_VC"
+  ]
+}
+```
+
 ---
 
-## Information Extraction
+# Information Extraction
 
-### Tonnage Emails
+## Tonnage Emails
 
-Extracted fields:
+Extracted Fields:
 
 * Vessel Name
 * Account Name
@@ -33,9 +72,11 @@ Extracted fields:
 * Vessel Type
 * Vessel Size
 
-### Cargo VC Emails
+---
 
-Extracted fields:
+## Cargo VC Emails
+
+Extracted Fields:
 
 * Account Name
 * Cargo Name
@@ -44,9 +85,11 @@ Extracted fields:
 * Laycan
 * Cargo Type
 
-### Cargo TC Emails
+---
 
-Extracted fields:
+## Cargo TC Emails
+
+Extracted Fields:
 
 * Account Name
 * Cargo Name
@@ -67,33 +110,22 @@ Extracted fields:
 * TF-IDF Vectorization
 * Logistic Regression
 * Regex-based NLP
+* JSON Data Handling
 
 ---
 
 # System Architecture
 
-Shipping Email
-→ ML Classification
-→ Category Detection
-→ Information Extraction
-→ Structured JSON Output
-
----
-
-# Project Structure
-
 ```text
-backend/
-    app.py
-    classifier.py
-    train.py
-    extractors/
-
-frontend/
-    app.py
-
-dataset/
-models/
+Shipping Email
+       ↓
+Email Classification
+       ↓
+Category Detection
+       ↓
+Information Extraction
+       ↓
+Structured JSON Output
 ```
 
 ---
@@ -102,10 +134,73 @@ models/
 
 The project uses:
 
-* TF-IDF vectorization for text feature extraction
-* Logistic Regression for classification
+## TF-IDF Vectorization
 
-Regex-based extraction is used for structured information retrieval from shipping emails.
+Used to convert email text into numerical feature vectors.
+
+## Logistic Regression
+
+Used for email category classification.
+
+The model is trained on a custom shipping email dataset.
+
+---
+
+# Multi-Category Detection
+
+An additional keyword-based detection layer is implemented to identify emails containing more than one shipping category.
+
+This helps process real-world broker emails that may contain:
+
+* vessel availability
+* cargo requirements
+* charter requests
+
+inside the same message.
+
+---
+
+# Information Extraction Logic
+
+Regex-based extraction methods are used for:
+
+* vessel information
+* cargo details
+* loading/discharge ports
+* laycan dates
+* charter duration
+
+The extraction logic is modular and separated into dedicated extractor files.
+
+---
+
+# Project Structure
+
+```text
+shipping-email-segregation/
+
+│
+├── backend/
+│   ├── app.py
+│   ├── classifier.py
+│   ├── train.py
+│   └── extractors/
+│       ├── tonnage.py
+│       ├── cargo_vc.py
+│       └── cargo_tc.py
+│
+├── frontend/
+│   └── app.py
+│
+├── dataset/
+│
+├── models/
+│   └── email_classifier.pkl
+│
+├── requirements.txt
+├── README.md
+└── .gitignore
+```
 
 ---
 
@@ -117,12 +212,16 @@ Regex-based extraction is used for structured information retrieval from shippin
 pip install -r requirements.txt
 ```
 
+---
+
 ## Run Backend
 
 ```bash
 cd backend
 uvicorn app:app --reload
 ```
+
+---
 
 ## Run Frontend
 
@@ -135,11 +234,35 @@ streamlit run app.py
 
 # Sample Output
 
-The system returns:
+```json
+{
+  "categories": [
+    "TONNAGE",
+    "CARGO_VC"
+  ],
+  "extracted_data": {
+    "TONNAGE": {
+      "vessel_name": "BLUE STAR",
+      "vessel_size": "38K"
+    },
+    "CARGO_VC": {
+      "cargo_name": "30000 MTS COAL",
+      "loading_port": "INDIA",
+      "discharge_port": "CHINA"
+    }
+  }
+}
+```
 
-* Email category
-* Confidence score
-* Extracted structured data
+---
+
+# Expected Outcome
+
+* Automatic segregation of shipping emails
+* Elimination of manual data entry
+* Faster cargo and vessel processing
+* Structured shipping data generation
+* Better operational efficiency
 
 ---
 
@@ -148,5 +271,21 @@ The system returns:
 * Vessel-to-cargo matching
 * Duplicate email detection
 * Broker/customer analytics
-* Market opportunity alerts
 * Database integration
+* Market opportunity alerts
+* Voyage workflow integration
+
+---
+
+# Conclusion
+
+This project demonstrates the use of Machine Learning and NLP techniques to automate shipping email processing.
+
+The system successfully:
+
+* classifies shipping emails
+* extracts structured information
+* supports multi-category edge cases
+* generates usable JSON output
+
+without relying on external AI APIs.
