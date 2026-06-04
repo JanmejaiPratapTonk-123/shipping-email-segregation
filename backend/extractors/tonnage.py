@@ -14,6 +14,7 @@ def extract_tonnage(text):
 
     text = text.upper()
 
+    # Vessel Name
     vessel = re.search(r"MV\s+([A-Z\s]+)", text)
 
     if vessel:
@@ -21,6 +22,7 @@ def extract_tonnage(text):
         name = re.split(r"DWT|\(|OPEN|-|/", name)[0]
         data["vessel_name"] = name.strip()
 
+    # Vessel Size
     size = re.search(r"/(\d+[K]?)\/", text)
 
     if not size:
@@ -40,6 +42,15 @@ def extract_tonnage(text):
     if open_match:
         data["open_date"] = open_match.group(1).strip()
         data["open_port"] = open_match.group(2).strip()
+
+    on_match = re.search(
+        r"OPEN\s+([A-Z\s]+)\s+ON\s+([0-9]{1,2}\s+[A-Z]+)",
+        text
+    )
+
+    if on_match:
+        data["open_port"] = on_match.group(1).strip()
+        data["open_date"] = on_match.group(2).strip()
 
     oa_match = re.search(
         r"OPEN\s+([A-Z\s,]+)\s+O/A\s+([A-Z0-9\s]+)",
